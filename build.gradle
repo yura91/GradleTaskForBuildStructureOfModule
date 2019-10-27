@@ -1,0 +1,196 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+        
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.3.2'
+        
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+
+//gradlew -Pmodule_name=myModule createFile        command to run this task
+task createFile {
+    File gitignore = new File("${module_name}/.gitignore")
+    gitignore.parentFile.mkdirs()
+    gitignore.createNewFile()
+    PrintWriter writer = new PrintWriter(gitignore)
+    writer.write("*.iml\n" +
+            ".gradle\n" +
+            "/local.properties\n" +
+            "/.idea/caches\n" +
+            "/.idea/libraries\n" +
+            "/.idea/modules.xml\n" +
+            "/.idea/workspace.xml\n" +
+            "/.idea/navEditor.xml\n" +
+            "/.idea/assetWizardSettings.xml\n" +
+            ".DS_Store\n" +
+            "/build\n" +
+            "/captures\n" +
+            ".externalNativeBuild")
+    writer.close()
+
+    File buildGradle = new File("${module_name}/build.gradle")
+    buildGradle.parentFile.mkdirs()
+    buildGradle.createNewFile()
+    PrintWriter writerGradle = new PrintWriter(buildGradle)
+    writerGradle.write("apply plugin: 'com.android.application'\n" +
+            "\n" +
+            "android {\n" +
+            "    compileSdkVersion 28\n" +
+            "    defaultConfig {\n" +
+            "        applicationId \"com.example.clienttocontentprovider\"\n" +
+            "        minSdkVersion 24\n" +
+            "        targetSdkVersion 28\n" +
+            "        versionCode 1\n" +
+            "        versionName \"1.0\"\n" +
+            "        testInstrumentationRunner \"android.support.test.runner.AndroidJUnitRunner\"\n" +
+            "    }\n" +
+            "    buildTypes {\n" +
+            "        release {\n" +
+            "            minifyEnabled false\n" +
+            "            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\n" +
+            "        }\n" +
+            "    }\n" +
+            "}\n" +
+            "\n" +
+            "\n" +
+            "dependencies {\n" +
+            "    implementation fileTree(dir: 'libs', include: ['*.jar'])\n" +
+            "    implementation 'com.android.support:appcompat-v7:28.0.0'\n" +
+            "    implementation 'com.android.support.constraint:constraint-layout:1.1.3'\n" +
+            "    testImplementation 'junit:junit:4.12'\n" +
+            "    androidTestImplementation 'com.android.support.test:runner:1.0.2'\n" +
+            "    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'\n" +
+            "}")
+    writerGradle.close()
+
+    File proguard = new File("${module_name}/proguard-rules.pro")
+    proguard.parentFile.mkdirs()
+    proguard.createNewFile()
+    PrintWriter writerProguard = new PrintWriter(proguard)
+    writerProguard.write("cntent proguard")
+    writerProguard.close()
+
+    File manifest = new File("${module_name}/src/main/AndroidManifest.xml")
+    manifest.parentFile.mkdirs()
+    manifest.createNewFile()
+    PrintWriter writerManifest = new PrintWriter(manifest)
+    writerManifest.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+            "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n" +
+            "    package=\"com.example.clienttocontentprovider\">\n" +
+            "\n" +
+            "    <application\n" +
+            "        android:allowBackup=\"true\"\n" +
+            "        android:icon=\"@mipmap/ic_launcher\"\n" +
+            "        android:label=\"@string/app_name\"\n" +
+            "        android:roundIcon=\"@mipmap/ic_launcher_round\"\n" +
+            "        android:supportsRtl=\"true\"\n" +
+            "        android:theme=\"@style/AppTheme\">\n" +
+            "        <activity android:name=\".gsfgs.MainActivity\">\n" +
+            "            <intent-filter>\n" +
+            "                <action android:name=\"android.intent.action.MAIN\" />\n" +
+            "\n" +
+            "                <category android:name=\"android.intent.category.LAUNCHER\" />\n" +
+            "            </intent-filter>\n" +
+            "        </activity>\n" +
+            "    </application>\n" +
+            "\n" +
+            "</manifest>")
+    writerManifest.close()
+
+    File mainActivity = new File("${module_name}/src/main/java/gsfgs/MainActivity.java")
+    mainActivity.parentFile.mkdirs()
+    mainActivity.createNewFile()
+    PrintWriter writerMainActivity = new PrintWriter(mainActivity)
+    writerMainActivity.write("import android.database.Cursor;\n" +
+            "import android.net.Uri;\n" +
+            "import android.support.v7.app.AppCompatActivity;\n" +
+            "import android.os.Bundle;\n" +
+            "import android.view.View;\n" +
+            "import android.widget.Toast;\n" +
+            "\n" +
+            "public class MainActivity extends AppCompatActivity {\n" +
+            "    static final String ID = \"id\";\n" +
+            "    static final String NAME = \"name\";\n" +
+            "    static final String BIRTHDAY = \"birthday\";\n" +
+            "    @Override\n" +
+            "    protected void onCreate(Bundle savedInstanceState) {\n" +
+            "        super.onCreate(savedInstanceState);\n" +
+            "        setContentView(R.layout.activity_main);\n" +
+            "        showAllBirthdays();\n" +
+            "    }\n" +
+            "\n" +
+            "    public void showAllBirthdays() {\n" +
+            "        // Show all the birthdays sorted by friend's name\n" +
+            "        String URL = \"content://com.javacodegeeks.provider.BirthdayProv/friends\";\n" +
+            "        Uri friends = Uri.parse(URL);\n" +
+            "        Cursor c = getContentResolver().query(friends, null, null, null, \"name\");\n" +
+            "        String result = \"Javacodegeeks Results:\";\n" +
+            "\n" +
+            "        if (!c.moveToFirst()) {\n" +
+            "            Toast.makeText(this, result+\" no content yet!\", Toast.LENGTH_LONG).show();\n" +
+            "        }else{\n" +
+            "            do{\n" +
+            "                result = result + \"\\n\" + c.getString(c.getColumnIndex(NAME)) +\n" +
+            "                        \" with id \" +  c.getString(c.getColumnIndex(ID)) +\n" +
+            "                        \" has birthday: \" + c.getString(c.getColumnIndex(BIRTHDAY));\n" +
+            "            } while (c.moveToNext());\n" +
+            "            Toast.makeText(this, result, Toast.LENGTH_LONG).show();\n" +
+            "        }\n" +
+            "\n" +
+            "    }\n" +
+            "}")
+    writerMainActivity.close()
+
+    File settings = new File("settings.gradle")
+    PrintWriter writerSettings = new PrintWriter(new FileOutputStream(
+            settings,
+            true
+));
+    writerSettings.append(", ':${module_name}'")
+    writerSettings.close()
+
+    File resActivity = new File("${module_name}/src/main/res/layout/activity_main.xml")
+    resActivity.parentFile.mkdirs()
+    resActivity.createNewFile()
+    PrintWriter writerResActivity = new PrintWriter(resActivity)
+
+    writerResActivity.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+            "<android.support.constraint.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n" +
+            "    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n" +
+            "    xmlns:tools=\"http://schemas.android.com/tools\"\n" +
+            "    android:layout_width=\"match_parent\"\n" +
+            "    android:layout_height=\"match_parent\"\n" +
+            "    tools:context=\".gsfgs.MainActivity\">\n" +
+            "\n" +
+            "    <TextView\n" +
+            "        android:layout_width=\"wrap_content\"\n" +
+            "        android:layout_height=\"wrap_content\"\n" +
+            "        android:text=\"Hello World!\"\n" +
+            "        app:layout_constraintBottom_toBottomOf=\"parent\"\n" +
+            "        app:layout_constraintLeft_toLeftOf=\"parent\"\n" +
+            "        app:layout_constraintRight_toRightOf=\"parent\"\n" +
+            "        app:layout_constraintTop_toTopOf=\"parent\" />\n" +
+            "\n" +
+            "</android.support.constraint.ConstraintLayout>")
+    writerResActivity.close()
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
